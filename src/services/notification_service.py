@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Tuple
 from ..models import NotificationDelivery, UserAlertPreference, Alert, User
 from .base import BaseService
 
-class NotificationService(BaseService[NotificationDelivery]):
+class NotificationService(BaseService):
     def __init__(self, db: Session):
-        super().__init__(NotificationDelivery, db)
+        super().__init__(db, NotificationDelivery)
         self.REMINDER_INTERVAL = timedelta(hours=2)
 
     def create_notification(self, user_id: int, alert_id: int) -> NotificationDelivery:

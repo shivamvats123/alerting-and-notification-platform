@@ -4,9 +4,9 @@ from typing import List, Optional
 from ..models import Alert, Team, User, UserAlertPreference
 from .base import BaseService
 
-class AlertService(BaseService[Alert]):
+class AlertService(BaseService):
     def __init__(self, db: Session):
-        super().__init__(Alert, db)
+        super().__init__(db, Alert)
 
     def create_alert(self, 
                     title: str,

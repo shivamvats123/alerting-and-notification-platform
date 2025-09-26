@@ -1,47 +1,53 @@
 from sqlalchemy.orm import Session
-from typing import Optional, Any
-from ..database import Base
+from sqlalchemy.ext.declarative import DeclarativeMeta
+from typing import Optional, Dict, List, Any, Union
 
 class BaseService:
-    def __init__(self, model: Any, db: Session):
-        """
-        Initialize the base service.
-        
-        Args:
-            model: SQLAlchemy model class
-            db: SQLAlchemy database session
-        """
-        self.model = model
+    """
+    Base service class for database operations.
+    """
+    def __init__(self, db: Session, model_class: DeclarativeMeta) -> None:
         self.db = db
+        self.model_class = model_class
 
-    def get(self, id: int) -> Optional[Any]:
-        """Get a single record by id."""
-        return self.db.query(self.model).filter(self.model.id == id).first()
+    def get(self, id: int) -> Optional[DeclarativeMeta]:
+        """
+        Get a record by ID.
+        """
+        return self.db.query(self.model_class).filter(self.model_class.id == id).first()
 
-    def get_all(self) -> list[Any]:
-        """Get all records."""
-        return self.db.query(self.model).all()
+    def get_all(self) -> List[DeclarativeMeta]:
+        """
+        Get all records.
+        """
+        return self.db.query(self.model_class).all()
 
-    def create(self, **kwargs) -> Any:
-        """Create a new record."""
-        instance = self.model(**kwargs)
+    def create(self, data: Dict[str, Any]) -> DeclarativeMeta:
+        """
+        Create a new record.
+        """
+        instance = self.model_class(**data)
         self.db.add(instance)
         self.db.commit()
         self.db.refresh(instance)
         return instance
 
-    def update(self, id: int, **kwargs) -> Optional[Any]:
-        """Update a record by id."""
+    def update(self, id: int, data: Dict[str, Any]) -> Optional[DeclarativeMeta]:
+        """
+        Update a record by ID.
+        """
         instance = self.get(id)
         if instance:
-            for key, value in kwargs.items():
+            for key, value in data.items():
                 setattr(instance, key, value)
             self.db.commit()
             self.db.refresh(instance)
         return instance
 
     def delete(self, id: int) -> bool:
-        """Delete a record by id."""
+        """
+        Delete a record by ID.
+        """
         instance = self.get(id)
         if instance:
             self.db.delete(instance)

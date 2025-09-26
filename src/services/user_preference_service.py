@@ -4,9 +4,9 @@ from typing import Optional, List
 from ..models import UserAlertPreference, Alert, User
 from .base import BaseService
 
-class UserPreferenceService(BaseService[UserAlertPreference]):
+class UserPreferenceService(BaseService):
     def __init__(self, db: Session):
-        super().__init__(UserAlertPreference, db)
+        super().__init__(db, UserAlertPreference)
 
     def get_user_preference(self, user_id: int, alert_id: int) -> Optional[UserAlertPreference]:
         return (
