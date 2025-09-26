@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
-from typing import Any, Generic, Type, Optional, TypeVar
+from typing import Generic, Type, Optional, TypeVar
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from ..database import Base
-ModelType = TypeVar("ModelType", bound=Any)
+
+ModelType = TypeVar("ModelType", bound=DeclarativeMeta)
 
 class BaseService(Generic[ModelType]):
     def __init__(self, model: Type[ModelType], db: Session):
