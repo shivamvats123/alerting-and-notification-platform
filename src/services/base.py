@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from typing import Any, Generic, Type, Optional, TypeVar
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from ..database import Base
-
 ModelType = TypeVar("ModelType", bound=Any)
 
 class BaseService(Generic[ModelType]):

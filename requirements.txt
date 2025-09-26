@@ -1,27 +1,30 @@
 # Core dependencies
-fastapi==0.103.1
-uvicorn==0.23.2
-gunicorn==21.2.0
+fastapi==0.68.0
+uvicorn==0.15.0
+gunicorn==20.1.0
 
 # Database
-sqlalchemy==2.0.21
-psycopg2-binary==2.9.7
+sqlalchemy==1.4.23
+psycopg2-binary==2.9.1
 
 # Data validation and settings
-pydantic==2.3.0
-pydantic-settings==2.0.3
-email-validator==2.0.0
+pydantic==1.8.2
+email-validator==1.1.3
 
 # Authentication and security
-cryptography==41.0.3
-python-jose==3.3.0
-passlib==1.7.4
-bcrypt==4.0.1
-python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.5
 
 # Date handling and scheduling
 python-dateutil==2.8.2
-apscheduler==3.10.4
+apscheduler==3.9.1
 
 # Development dependencies
-pytest==7.4.2
+pytest==6.2.5
+
+# Additional requirements
+typing-extensions==4.5.0
+starlette==0.14.2
+click==8.0.4
+h11==0.13.0

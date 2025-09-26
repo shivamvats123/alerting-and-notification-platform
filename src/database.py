@@ -14,13 +14,22 @@ if ENVIRONMENT == "production":
 else:
     SQLALCHEMY_DATABASE_URL = DATABASE_URL
 
-# Configure SQLAlchemy engine
+# Configure SQLAlchemy engine with connection pooling and retry settings
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+        SQLALCHEMY_DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        pool_pre_ping=True
     )
 else:
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        pool_size=5,
+        max_overflow=10,
+        pool_timeout=30,
+        pool_pre_ping=True,
+        pool_recycle=1800  # Recycle connections every 30 minutes
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
