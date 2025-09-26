@@ -18,7 +18,7 @@ python-multipart==0.0.5
 
 # Date handling and scheduling
 python-dateutil==2.8.2
-apscheduler==3.9.1
+apscheduler==3.10.1
 
 # Development dependencies
 pytest==6.2.5
