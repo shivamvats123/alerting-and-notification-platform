@@ -2,7 +2,9 @@ services:
   - type: web
     name: alerting-and-notification-platform
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install --upgrade pip wheel setuptools
+      pip install -r requirements.txt
     startCommand: gunicorn src.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
@@ -11,5 +13,11 @@ services:
         value: production
       - key: SECRET_KEY
         generateValue: true
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      - key: PIP_DISABLE_PIP_VERSION_CHECK
+        value: "1"
+      - key: PIP_NO_CACHE_DIR
+        value: "1"
     plan: free
     branch: main
