@@ -5,7 +5,7 @@ services:
     buildCommand: |
       pip install --upgrade pip wheel setuptools
       pip install -r requirements.txt
-    startCommand: gunicorn src.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT
+    startCommand: gunicorn src.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT --timeout 120 --keep-alive 120 --graceful-timeout 120
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.5
@@ -14,10 +14,24 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: PYTHONPATH
-        value: /opt/render/project/src
+        value: .
       - key: PIP_DISABLE_PIP_VERSION_CHECK
         value: "1"
       - key: PIP_NO_CACHE_DIR
         value: "1"
+      - key: DATABASE_URL
+        value: sqlite:///./notification_platform.db
+      - key: WORKERS_PER_CORE
+        value: "2"
+      - key: MAX_WORKERS
+        value: "4"
+      - key: WEB_CONCURRENCY
+        value: "2"
+    healthCheckPath: /
+    buildFilter:
+      paths:
+        - src/**
+        - requirements.txt
+        - render.yaml
     plan: free
     branch: main

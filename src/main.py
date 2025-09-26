@@ -15,20 +15,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
-
+# Initialize FastAPI application
 app = FastAPI(
     title="Alerting & Notification Platform",
     description="A lightweight alerting and notification system",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs" if os.getenv("ENVIRONMENT") != "production" else None,
+    redoc_url="/redoc" if os.getenv("ENVIRONMENT") != "production" else None,
 )
 
-# Configure CORS with more specific settings
+# Configure CORS
 origins = [
     "http://localhost",
     "http://localhost:8000",
-    "https://alerting-and-notification-platform.onrender.com"
+    "https://alerting-and-notification-platform.onrender.com",
+    "https://*.render.com"
 ]
 
 app.add_middleware(

@@ -1,29 +1,37 @@
 from sqlalchemy.orm import Session
-from typing import Generic, Type, Optional, TypeVar
-from sqlalchemy.ext.declarative import DeclarativeMeta
+from typing import Optional, Any
 from ..database import Base
 
-ModelType = TypeVar("ModelType", bound=DeclarativeMeta)
-
-class BaseService(Generic[ModelType]):
-    def __init__(self, model: Type[ModelType], db: Session):
+class BaseService:
+    def __init__(self, model: Any, db: Session):
+        """
+        Initialize the base service.
+        
+        Args:
+            model: SQLAlchemy model class
+            db: SQLAlchemy database session
+        """
         self.model = model
         self.db = db
 
-    def get(self, id: int) -> Optional[ModelType]:
+    def get(self, id: int) -> Optional[Any]:
+        """Get a single record by id."""
         return self.db.query(self.model).filter(self.model.id == id).first()
 
-    def get_all(self):
+    def get_all(self) -> list[Any]:
+        """Get all records."""
         return self.db.query(self.model).all()
 
-    def create(self, **kwargs) -> ModelType:
+    def create(self, **kwargs) -> Any:
+        """Create a new record."""
         instance = self.model(**kwargs)
         self.db.add(instance)
         self.db.commit()
         self.db.refresh(instance)
         return instance
 
-    def update(self, id: int, **kwargs) -> Optional[ModelType]:
+    def update(self, id: int, **kwargs) -> Optional[Any]:
+        """Update a record by id."""
         instance = self.get(id)
         if instance:
             for key, value in kwargs.items():
@@ -33,6 +41,7 @@ class BaseService(Generic[ModelType]):
         return instance
 
     def delete(self, id: int) -> bool:
+        """Delete a record by id."""
         instance = self.get(id)
         if instance:
             self.db.delete(instance)
