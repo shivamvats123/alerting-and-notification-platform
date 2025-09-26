@@ -1,15 +1,13 @@
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from typing import List, Tuple
 from ..models import NotificationDelivery, UserAlertPreference, Alert, User
 from .base import BaseService
 
 class NotificationService(BaseService):
-    def __init__(self, db: Session):
+    def __init__(self, db):
         super().__init__(db, NotificationDelivery)
         self.REMINDER_INTERVAL = timedelta(hours=2)
 
-    def create_notification(self, user_id: int, alert_id: int) -> NotificationDelivery:
+    def create_notification(self, user_id, alert_id):
         notification = NotificationDelivery(
             user_id=user_id,
             alert_id=alert_id,
@@ -21,7 +19,7 @@ class NotificationService(BaseService):
         self.db.refresh(notification)
         return notification
 
-    def get_pending_reminders(self) -> List[tuple[User, Alert]]:
+    def get_pending_reminders(self):
         now = datetime.utcnow()
         preferences = (
             self.db.query(UserAlertPreference)
@@ -55,11 +53,3 @@ class NotificationService(BaseService):
             if preference:
                 preference.last_reminded_at = datetime.utcnow()
                 self.db.commit()
-
-    def get_user_notifications(self, user_id: int) -> List[NotificationDelivery]:
-        return (
-            self.db.query(NotificationDelivery)
-            .filter_by(user_id=user_id)
-            .order_by(NotificationDelivery.delivered_at.desc())
-            .all()
-        )

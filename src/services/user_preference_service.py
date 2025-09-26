@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from typing import Optional, List
-from ..models import UserAlertPreference, Alert, User
+from ..models import UserAlertPreference
 from .base import BaseService
 
 class UserPreferenceService(BaseService):
-    def __init__(self, db: Session):
+    def __init__(self, db):
         super().__init__(db, UserAlertPreference)
 
-    def get_user_preference(self, user_id: int, alert_id: int) -> Optional[UserAlertPreference]:
+    def get_user_preference(self, user_id, alert_id):
         return (
             self.db.query(UserAlertPreference)
             .filter_by(user_id=user_id, alert_id=alert_id)
@@ -16,8 +14,8 @@ class UserPreferenceService(BaseService):
         )
 
     def create_or_update_preference(
-        self, user_id: int, alert_id: int, is_read: bool = None, snooze: bool = None
-    ) -> UserAlertPreference:
+        self, user_id, alert_id, is_read=None, snooze=None
+    ):
         preference = self.get_user_preference(user_id, alert_id)
         
         if not preference:
@@ -39,18 +37,11 @@ class UserPreferenceService(BaseService):
         self.db.refresh(preference)
         return preference
 
-    def mark_read(self, user_id: int, alert_id: int) -> UserAlertPreference:
+    def mark_read(self, user_id, alert_id):
         return self.create_or_update_preference(user_id, alert_id, is_read=True)
 
-    def mark_unread(self, user_id: int, alert_id: int) -> UserAlertPreference:
+    def mark_unread(self, user_id, alert_id):
         return self.create_or_update_preference(user_id, alert_id, is_read=False)
 
-    def snooze_alert(self, user_id: int, alert_id: int) -> UserAlertPreference:
+    def snooze_alert(self, user_id, alert_id):
         return self.create_or_update_preference(user_id, alert_id, snooze=True)
-
-    def get_user_preferences(self, user_id: int) -> List[UserAlertPreference]:
-        return (
-            self.db.query(UserAlertPreference)
-            .filter_by(user_id=user_id)
-            .all()
-        )
